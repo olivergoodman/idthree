@@ -37,8 +37,10 @@ def check_homogenous(data_set):
     Output: Return either the homogenous attribute or None
     ========================================================================================================
      '''
-    # Your code here
-    pass
+    for attribute in data_set:
+        if attribute != data_set[0]:
+            return None
+    return data_set[0][0]
 # ======== Test Cases =============================
 # data_set = [[0],[1],[1],[1],[1],[1]]
 # check_homogenous(data_set) ==  None
@@ -60,8 +62,23 @@ def pick_best_attribute(data_set, attribute_metadata, numerical_splits_count):
     Output: best attribute, split value if numeric
     ========================================================================================================
     '''
-    # Your code here
-    pass
+    best_ratio = 0
+    best_attribute = False
+    steps = 1
+    split_value = False
+    for i in range(len(attribute_metadata)):
+        if attribute_metadata[i]['name'] != 'winner':
+            if attribute_metadata[i]['is_nominal'] == True:
+                ratio = gain_ratio_nominal(data_set, i)
+            else:
+                ratio, threshold = gain_ratio_numeric(data_set, i, steps)
+            if ratio > best_ratio:
+                best_ratio = ratio
+                best_attribute = i
+                if attribute_metadata[i]['is_nominal'] == False:
+                    split_value = threshold
+                    
+    return best_attribute, split_value
 
 # # ======== Test Cases =============================
 # numerical_splits_count = [20,20]
@@ -84,8 +101,8 @@ def mode(data_set):
     Output: mode of index 0.
     ========================================================================================================
     '''
-    # Your code here
-    pass
+    [item for data_set in data_set for item in data_set]
+    return max(set(data_set), key=data_set.count)
 # ======== Test case =============================
 # data_set = [[0],[1],[1],[1],[1],[1]]
 # mode(data_set) == 1
@@ -102,7 +119,16 @@ def entropy(data_set):
     Output: Returns entropy. See Textbook for formula
     ========================================================================================================
     '''
-
+    #Create list of only the winner variable
+    winners = []
+    for sublist in data_set:
+        winners.append(sublist[0])
+    entropy = 0
+    length = float(len(winners))
+    unique_data_set = list(set(winners))
+    for x in unique_data_set:
+        entropy -= (winners.count(x) / length) * math.log((winners.count(x) / length), 2)
+    return entropy
 
 # ======== Test case =============================
 # data_set = [[0],[1],[1],[1],[0],[1],[1],[1]]
@@ -123,8 +149,22 @@ def gain_ratio_nominal(data_set, attribute):
     Output: Returns gain_ratio. See https://en.wikipedia.org/wiki/Information_gain_ratio
     ========================================================================================================
     '''
-    # Your code here
-    pass
+    info_gain = entropy(data_set)
+    intr_value = 0
+    #Create list of only the attribute variable
+    attr = []
+    for sublist in data_set:
+        attr.append(sublist[attribute])
+    length = float(len(attr))
+    unique_attr = list(set(attr))
+    for value in unique_attr:
+        attr_data = []
+        for row in data_set:
+            if row[attribute] == value:
+                attr_data.append(row)
+        info_gain -= ((attr.count(value) / length) * entropy(attr_data))
+        intr_value -= (attr.count(value) / length) * math.log((attr.count(value) / length), 2)
+    return info_gain / intr_value
 # ======== Test case =============================
 # data_set, attr = [[1, 2], [1, 0], [1, 0], [0, 2], [0, 2], [0, 0], [1, 3], [0, 4], [0, 3], [1, 1]], 1
 # gain_ratio_nominal(data_set,attr) == 0.11470666361703151
@@ -148,8 +188,39 @@ def gain_ratio_numeric(data_set, attribute, steps):
     Output: This function returns the gain ratio and threshold value
     ========================================================================================================
     '''
-    # Your code here
-    pass
+    #Create list of only the attribute variable
+    attr = []
+    for sublist in data_set:
+        attr.append(sublist[attribute])
+        
+    length = float(len(attr))
+    best_threshold = None
+    best_ratio = 0
+    index = 0
+    while index < length:
+        info_gain = entropy(data_set)
+        intr_value = 0
+        threshold = attr[index]
+        for value in ['>=', '<']:
+            attr_data = []
+            for row in data_set:
+                if (value == '>=' and row[attribute] >= threshold) or (value == '<' and row[attribute] < threshold):
+                    attr_data.append(row)
+            if len(attr_data) != 0:
+                info_gain -= ((len(attr_data) / length) * entropy(attr_data))
+                intr_value -= (len(attr_data) / length) * math.log((len(attr_data) / length), 2)
+
+        if intr_value == 0:
+            info_ratio = 0
+        else:
+            info_ratio = info_gain / intr_value
+            
+        if info_ratio > best_ratio:
+            best_ratio = info_ratio
+            best_threshold = threshold
+        index = index + steps
+    
+    return best_ratio, best_threshold
 # ======== Test case =============================
 # data_set,attr,step = [[0,0.05], [1,0.17], [1,0.64], [0,0.38], [0,0.19], [1,0.68], [1,0.69], [1,0.17], [1,0.4], [0,0.53]], 1, 2
 # gain_ratio_numeric(data_set,attr,step) == (0.31918053332474033, 0.64)
@@ -168,8 +239,13 @@ def split_on_nominal(data_set, attribute):
     Output: Dictionary of all values pointing to a list of all the data with that attribute
     ========================================================================================================
     '''
-    # Your code here
-    pass
+    subsets = {}
+    for row in data_set:
+        if row[attribute] not in subsets:
+            subsets[row[attribute]] = [row]
+        else:
+            subsets[row[attribute]].append(row)
+    return subsets
 # ======== Test case =============================
 # data_set, attr = [[0, 4], [1, 3], [1, 2], [0, 0], [0, 0], [0, 4], [1, 4], [0, 2], [1, 2], [0, 1]], 1
 # split_on_nominal(data_set, attr) == {0: [[0, 0], [0, 0]], 1: [[0, 1]], 2: [[1, 2], [0, 2], [1, 2]], 3: [[1, 3]], 4: [[0, 4], [0, 4], [1, 4]]}
@@ -187,8 +263,13 @@ def split_on_numerical(data_set, attribute, splitting_value):
     Output: Tuple of two lists as described above
     ========================================================================================================
     '''
-    # Your code here
-    pass
+    subsets = [],[]
+    for row in data_set:
+        if row[attribute] < splitting_value:
+            subsets[0].append(row)
+        else:
+            subsets[1].append(row)
+    return subsets
 # ======== Test case =============================
 # d_set,a,sval = [[1, 0.25], [1, 0.89], [0, 0.93], [0, 0.48], [1, 0.19], [1, 0.49], [0, 0.6], [0, 0.6], [1, 0.34], [1, 0.19]],1,0.48
 # split_on_numerical(d_set,a,sval) == ([[1, 0.25], [1, 0.19], [1, 0.34], [1, 0.19]],[[1, 0.89], [0, 0.93], [0, 0.48], [1, 0.49], [0, 0.6], [0, 0.6]])
