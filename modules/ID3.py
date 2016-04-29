@@ -101,8 +101,11 @@ def mode(data_set):
     Output: mode of index 0.
     ========================================================================================================
     '''
-    [item for data_set in data_set for item in data_set]
-    return max(set(data_set), key=data_set.count)
+    #Create list of only the winner variable
+    winners = []
+    for sublist in data_set:
+        winners.append(sublist[0])
+    return max(set(winners), key=winners.count)
 # ======== Test case =============================
 # data_set = [[0],[1],[1],[1],[1],[1]]
 # mode(data_set) == 1
