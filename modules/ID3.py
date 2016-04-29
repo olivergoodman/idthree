@@ -23,8 +23,36 @@ def ID3(data_set, attribute_metadata, numerical_splits_count, depth):
         return n
     elif not attribute_metadata:
         n = Node()
-        n.label = mode(data_set) #implement later
+        n.label = mode(data_set)
         return n
+    else:
+        best, split_count = pick_best_attribute(data_set, attribute_metadata, numerical_splits_count)
+        tree = Node() #the root 
+        tree.decision_attribute = best
+        data_sub = []
+        #if a nominal attribute
+        if attribute_metadata[best]['is_nominal'] == True:
+            best_attributes_dict = split_on_nominal(data_set, best)
+            for v in best_attributes_dict:
+                data_sub.append(best_attributes_dict[v])             
+                subtree = ID3(data_sub, attribute_metadata.pop(best), split_count, depth)
+                tree.chiildren = subtree #adding branch to the tree
+        #if numerical attribute
+        else:
+            best_attributes_list1, best_attributes_list2 = split_on_numerical(data_set, best, split_count)
+            for v in best_attributes_list1 + best_attributes_list2:
+                data_sub.append(v)
+                subtree = ID3(data_sub, attribute_metadata.pop(best), split_count, depth)
+                subtree.label = v
+                tree.chiildren = subtree #adding branch to the tree 
+        return tree
+
+        # NOTES:
+        # - need to add depth check
+        # - right now: for numerical attr, looping thru ALL attr. Maybe try just the ones form first list ?
+        # getting 'pop index out of range', perhaps related to depth check?
+
+
         
 
 def check_homogenous(data_set):
