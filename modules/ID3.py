@@ -31,34 +31,36 @@ def ID3(data_set, attribute_metadata, numerical_splits_count, depth):
         n.label = mode(data_set)
         return n
     else:
-        best, split_count = pick_best_attribute(data_set, attribute_metadata, numerical_splits_count)
+        best, split_value = pick_best_attribute(data_set, attribute_metadata, numerical_splits_count)
         tree = Node() #the root 
+        tree.is_nominal = attribute_metadata[best]['is_nominal']
         tree.decision_attribute = best
+        tree.splitting_value = split_value
+        tree.name = attribute_metadata[best]['name']
         data_sub = []
         #if a nominal attribute
         if attribute_metadata[best]['is_nominal'] == True:
             best_attributes_dict = split_on_nominal(data_set, best)
             for v in best_attributes_dict:
                 #data_sub.append(best_attributes_dict[v])             
-                subtree = ID3(best_attributes_dict[v], attribute_metadata, split_count, depth - 1)
+                subtree = ID3(best_attributes_dict[v], attribute_metadata, split_value, depth - 1)
                 tree.children[v] = subtree #adding branch to the tree
         #if numerical attribute
         else:
-            best_attributes_list1, best_attributes_list2 = split_on_numerical(data_set, best, split_count)
-            splits = split_on_numerical(data_set, best, split_count)
+            best_attributes_list1, best_attributes_list2 = split_on_numerical(data_set, best, split_value)
+            splits = split_on_numerical(data_set, best, split_value)
             
-            for v in best_attributes_list1 + best_attributes_list2:
-                data_sub.append(v)
-                subtree = ID3(data_sub, attribute_metadata, split_count, depth - 1)
-                #subtree.label = v
-                tree.children = subtree #adding branch to the tree 
+            # for v in best_attributes_list1 + best_attributes_list2:
+            #     # data_sub.append(v)
+            #     subtree = ID3(best_attributes_dict[v], attribute_metadata, split_value, depth - 1)
+            #     #subtree.label = v
+            #     tree.children[v] = subtree #adding branch to the tree 
             
-            '''
             for data in splits:
-                print(data)
-                subtree = ID3(data, attribute_metadata.pop(best), split_count, depth - 1)
-                tree.children = subtree #adding branch to the tree
-            '''
+                # print(data)
+                subtree = ID3(data, attribute_metadata, split_value, depth - 1)
+                tree.children[splits.index(data)] = subtree #adding branch to the tree
+
         return tree
 
         # NOTES:

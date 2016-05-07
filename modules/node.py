@@ -41,10 +41,9 @@ class Node:
                 curr = curr.children[instance[curr.decision_attribute]]
             else:
                 if instance[curr.decision_attribute] < curr.splitting_value:
-                    curr = curr.children[1]
+                    curr = curr.children[0]
                 else:
-                    print(curr.children)
-                    curr = curr.children[2]
+                    curr = curr.children[1]
         return curr.label
 
     def print_tree(self, indent = 0):
