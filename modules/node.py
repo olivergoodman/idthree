@@ -45,6 +45,20 @@ class Node:
                 else:
                     curr = curr.children[1]
         return curr.label
+        # if not self.children:
+        #     return self.label
+        # else:
+        #     for child in self.children:
+        #         if self.is_nominal:
+        #             if self.children[child].splitting_value == instance[self.decision_attribute]:
+        #                 self.children[child].classify(instance)
+        #     else:
+        #         if instance[self.decision_attribute] < self.splitting_value:
+        #             self.children[0].classify(instance)
+        #         else:
+        #             self.children[1].classify(instance)
+        #     # matchingChildren = [child for child in self.children if self.children[child].splitting_value == instance[self.decision_attribute]]
+        #     # return matchingChildren[0].classify(instance)
 
     def print_tree(self, indent = 0):
         '''
@@ -60,7 +74,47 @@ class Node:
         '''
         returns the disjunct normalized form of the tree.
         '''
-        pass
+        ret_list = []
+        path = []
+        self.dnf_helper(-1, path, ret_list)
+        print 'v'.join(ret_list)
+ 
+    def dnf_helper(self, node_val, path, ret_list):
+        if self.label == 1 and node_val != -1:
+            leaf_reached = True
+            path.append(node_val)
+            ret = '('
+            for item in path:
+                if item == path[-1]:
+                    ret += 'n' + str(item)
+                else:
+                    ret += 'n' + str(item) + '^'
+            ret += ')'
+            ret_list.append(ret)
+            path = []
+            return True
+        elif self.label == None and node_val != -1:
+            path.append(node_val)
+        for child in self.children:
+            node_val += 1
+            if self.children[child].dnf_helper(node_val, path, ret_list):
+                path = []
 
 
+### Test cases for dnf ###
+n = Node()
+n.label = None
+n0 = Node()
+n0.label = 1
+n1 = Node()
+n1.label = None
+n.children = {1: n0, 2: n1}
+n2 = Node()
+n2.label = 0
+n3 = Node()
+n3.label = 1
+n1.children = {1: n2, 2: n3}
+n4 = Node()
+n5 = Node()
 
+n.print_dnf_tree()
