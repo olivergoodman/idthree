@@ -43,6 +43,7 @@ class Node:
                 if instance[curr.decision_attribute] < curr.splitting_value:
                     curr = curr.children[1]
                 else:
+                    print(curr.children)
                     curr = curr.children[2]
         return curr.label
 
