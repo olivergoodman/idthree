@@ -9,13 +9,12 @@ def ID3(data_set, attribute_metadata, numerical_splits_count, depth):
     given in lecture.
     ========================================================================================================
     Input:  A data_set, attribute_metadata, maximum number of splits to consider for numerical attributes,
-	maximum depth to search to (depth = 0 indicates that this node should output a label)
+    maximum depth to search to (depth = 0 indicates that this node should output a label)
     ========================================================================================================
     Output: The node representing the decision tree learned over the given data set
     ========================================================================================================
 
     '''
-    #print("Depth: " + str(depth))
     if not data_set:
         return Node()
     elif check_homogenous(data_set) != None:
@@ -32,6 +31,10 @@ def ID3(data_set, attribute_metadata, numerical_splits_count, depth):
         return n
     else:
         best, split_value = pick_best_attribute(data_set, attribute_metadata, numerical_splits_count)
+        if attribute_metadata[best]['is_nominal'] == False:
+            numerical_splits_count[best] -= 1
+        if best == False:
+            return Node()
         tree = Node() #the root 
         tree.is_nominal = attribute_metadata[best]['is_nominal']
         tree.decision_attribute = best
@@ -42,24 +45,16 @@ def ID3(data_set, attribute_metadata, numerical_splits_count, depth):
         if attribute_metadata[best]['is_nominal'] == True:
             best_attributes_dict = split_on_nominal(data_set, best)
             for v in best_attributes_dict:
-                #data_sub.append(best_attributes_dict[v])             
-                subtree = ID3(best_attributes_dict[v], attribute_metadata, split_value, depth - 1)
+                subtree = ID3(best_attributes_dict[v], attribute_metadata, numerical_splits_count, depth - 1)
+                subtree.label = v
                 tree.children[v] = subtree #adding branch to the tree
         #if numerical attribute
         else:
-            best_attributes_list1, best_attributes_list2 = split_on_numerical(data_set, best, split_value)
             splits = split_on_numerical(data_set, best, split_value)
-            
-            # for v in best_attributes_list1 + best_attributes_list2:
-            #     # data_sub.append(v)
-            #     subtree = ID3(best_attributes_dict[v], attribute_metadata, split_value, depth - 1)
-            #     #subtree.label = v
-            #     tree.children[v] = subtree #adding branch to the tree 
-            
-            for data in splits:
-                # print(data)
-                subtree = ID3(data, attribute_metadata, split_value, depth - 1)
-                tree.children[splits.index(data)] = subtree #adding branch to the tree
+            for v in splits:
+                subtree = ID3(v, attribute_metadata, numerical_splits_count, depth - 1)
+                subtree.label = splits.index(v)
+                tree.children[splits.index(v)] = subtree #adding branch to the tree
 
         return tree
 
@@ -115,6 +110,8 @@ def pick_best_attribute(data_set, attribute_metadata, numerical_splits_count):
             if attribute_metadata[i]['is_nominal'] == True:
                 ratio = gain_ratio_nominal(data_set, i)
             else:
+                if numerical_splits_count[i] <= 0:
+                    continue
                 ratio, threshold = gain_ratio_numeric(data_set, i, steps)
             if ratio > best_ratio:
                 best_ratio = ratio
@@ -305,7 +302,7 @@ def split_on_numerical(data_set, attribute, splitting_value):
     Input:  Subset of data set, the index for a numeric attribute, threshold (splitting) value
     ========================================================================================================
     Job:    Splits data_set into a tuple of two lists, the first list contains the examples where the given
-	attribute has value less than the splitting value, the second list contains the other examples
+    attribute has value less than the splitting value, the second list contains the other examples
     ========================================================================================================
     Output: Tuple of two lists as described above
     ========================================================================================================
