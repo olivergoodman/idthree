@@ -34,35 +34,32 @@ def ID3(data_set, attribute_metadata, numerical_splits_count, depth):
         if attribute_metadata[best]['is_nominal'] == False:
             numerical_splits_count[best] -= 1
         if best == False:
-            return Node()
+            n = Node()
+            n.label = mode(data_set)
+            return n
         tree = Node() #the root 
         tree.is_nominal = attribute_metadata[best]['is_nominal']
         tree.decision_attribute = best
         tree.splitting_value = split_value
         tree.name = attribute_metadata[best]['name']
-        tree.label = None
         data_sub = []
         #if a nominal attribute
         if attribute_metadata[best]['is_nominal'] == True:
             best_attributes_dict = split_on_nominal(data_set, best)
             for v in best_attributes_dict:
                 subtree = ID3(best_attributes_dict[v], attribute_metadata, numerical_splits_count, depth - 1)
-                subtree.label = mode(best_attributes_dict[v])
                 tree.children[v] = subtree #adding branch to the tree
         #if numerical attribute
         else:
             splits = split_on_numerical(data_set, best, split_value)
             for v in splits:
                 subtree = ID3(v, attribute_metadata, numerical_splits_count, depth - 1)
-                subtree.label = mode(v)
                 tree.children[splits.index(v)] = subtree #adding branch to the tree
 
         return tree
 
         # NOTES:
-        # - need to add depth check
-        # - right now: for numerical attr, looping thru ALL attr. Maybe try just the ones form first list ?
-        # getting 'pop index out of range', perhaps related to depth check?
+        # - need to handle missing attributes
 
 
         
@@ -320,3 +317,10 @@ def split_on_numerical(data_set, attribute, splitting_value):
 # split_on_numerical(d_set,a,sval) == ([[1, 0.25], [1, 0.19], [1, 0.34], [1, 0.19]],[[1, 0.89], [0, 0.93], [0, 0.48], [1, 0.49], [0, 0.6], [0, 0.6]])
 # d_set,a,sval = [[0, 0.91], [0, 0.84], [1, 0.82], [1, 0.07], [0, 0.82],[0, 0.59], [0, 0.87], [0, 0.17], [1, 0.05], [1, 0.76]],1,0.17
 # split_on_numerical(d_set,a,sval) == ([[1, 0.07], [1, 0.05]],[[0, 0.91],[0, 0.84], [1, 0.82], [0, 0.82], [0, 0.59], [0, 0.87], [0, 0.17], [1, 0.76]])
+
+attribute_metadata = [{'name': "winner",'is_nominal': True},{'name': "opprundifferential",'is_nominal': False}]
+data_set = [[1, 0.27], [0, 0.42], [0, 0.86], [0, 0.68], [0, 0.04], [1, 0.01], [1, 0.33], [1, 0.42], [1, 0.42], [0, 0.51], [1, 0.4]]
+numerical_splits_count = [5, 5]
+n = ID3(data_set, attribute_metadata, numerical_splits_count, 5)
+
+n.print_dnf_tree()

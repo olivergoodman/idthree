@@ -60,18 +60,25 @@ class Node:
         '''
         returns the disjunct normalized form of the tree.
         '''
-        print("dfs")
         paths = self.dnf_helper([self], [], [])
         ret = ''
         for p in paths:
             del p[0]
-            del p[0]
             ret += '('
-            for n in p:
+            for i, n in enumerate(p):
+                if i == 0:
+                    continue
                 if n == p[-1]:
-                    ret += 'n' + str(n.value)
+                    ret += str(p[i-1].name) + '='
+                    for c in p[i - 1].children:
+                        if n == p[i-1].children[c]:
+                            ret += str(c)
                 else:
-                    ret += 'n' + str(n.value) + '^'
+                    ret += str(p[i-1].name) + '='
+                    for c in p[i - 1].children:
+                        if n == p[i-1].children[c]:
+                            ret += str(c)
+                    ret += '^'
             ret += ')'
             if p != paths[-1]:
                 ret += 'v'
@@ -103,44 +110,41 @@ class Node:
             return last.dnf_helper(stack, path, ret_path)
             
 ### Test cases for dnf ###
-n = Node()
-n.label = None
-n.value = -1
-n0 = Node()
-n0.label = None
-n0.value = 0
-n1 = Node()
-n1.label = None
-n1.value = 1
-n2 = Node()
-n2.label = 1
-n2.value = 2
-n3 = Node()
-n3.label = 0
-n3.value = 3
-n4 = Node()
-n4.label = 0
-n4.value = 4
-n5 = Node()
-n5.label = None
-n5.value = 5
-n6 = Node()
-n6.label = None
-n6.value = 6
-n7 = Node()
-n7.label = 1
-n7.value = 7
-n8 = Node()
-n8.label = 0
-n8.value = 8
-n9 = Node()
-n9.label = 1
-n9.value = 9
-n.children = {1: n0, 2: n5}
-n0.children = {1: n1, 2: n4}
-n1.children = {1: n2, 2: n3}
-n5.children = {1: n6, 2: n9}
-n6.children = {1: n7, 2: n8}
-
-
-n.print_dnf_tree()
+# n = Node()
+# n.label = None
+# n.value = -1
+# n0 = Node()
+# n0.label = None
+# n0.value = 0
+# n1 = Node()
+# n1.label = None
+# n1.value = 1
+# n2 = Node()
+# n2.label = 1
+# n2.value = 2
+# n3 = Node()
+# n3.label = 0
+# n3.value = 3
+# n4 = Node()
+# n4.label = 0
+# n4.value = 4
+# n5 = Node()
+# n5.label = None
+# n5.value = 5
+# n6 = Node()
+# n6.label = None
+# n6.value = 6
+# n7 = Node()
+# n7.label = 1
+# n7.value = 7
+# n8 = Node()
+# n8.label = 0
+# n8.value = 8
+# n9 = Node()
+# n9.label = 1
+# n9.value = 9
+# n.children = {1: n0, 2: n5}
+# n0.children = {1: n1, 2: n4}
+# n1.children = {1: n2, 2: n3}
+# n5.children = {1: n6, 2: n9}
+# n6.children = {1: n7, 2: n8}
