@@ -45,20 +45,6 @@ class Node:
                 else:
                     curr = curr.children[1]
         return curr.label
-        # if not self.children:
-        #     return self.label
-        # else:
-        #     for child in self.children:
-        #         if self.is_nominal:
-        #             if self.children[child].splitting_value == instance[self.decision_attribute]:
-        #                 self.children[child].classify(instance)
-        #     else:
-        #         if instance[self.decision_attribute] < self.splitting_value:
-        #             self.children[0].classify(instance)
-        #         else:
-        #             self.children[1].classify(instance)
-        #     # matchingChildren = [child for child in self.children if self.children[child].splitting_value == instance[self.decision_attribute]]
-        #     # return matchingChildren[0].classify(instance)
 
     def print_tree(self, indent = 0):
         '''
