@@ -77,6 +77,11 @@ class Node:
         ret_list = []
         path = []
         self.dnf_helper(-1, path, ret_list)
+        print("dfs")
+        paths = self.dnf_helper_2([self], [], [])
+        print(ret_list)
+        for p in paths:
+            print("path: " + str(p))
         del ret_list[0][0]
         ret_list.reverse()
         ret = ''
@@ -132,6 +137,32 @@ class Node:
                     path.append(self.value)
             for c in node.children:
                 stack.append(node.children[c])
+
+    def dnf_helper_2(self, stack, path, ret_path):
+        print("root: " + str(self.value))
+        print("ret path: " + str(ret_path))
+        root = self
+        if not(root in path):
+            path.append(root)
+        for child in root.children:
+            if not(root.children[child] in path):
+                stack.append(root)
+                return root.children[child].dnf_helper_2(stack, path, ret_path)
+        #If leaf label is one, save the path
+        if root.label == 1:
+            print("1 Leaf: " + str(root))
+            stack_temp = []
+            for val in stack:
+                stack_temp.append(val)
+            ret_path.append(stack_temp)
+            #print("ret path" + str(ret_path))
+        last = stack.pop()
+        if len(stack) == 0:
+            print("ret path: " + str(ret_path))
+            return ret_path
+        else:
+            #return 1
+            return last.dnf_helper_2(stack, path, ret_path)
 
     # def dnf_helper(self, currPath, paths):
     #     # node_val += 1
