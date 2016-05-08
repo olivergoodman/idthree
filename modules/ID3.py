@@ -40,20 +40,21 @@ def ID3(data_set, attribute_metadata, numerical_splits_count, depth):
         tree.decision_attribute = best
         tree.splitting_value = split_value
         tree.name = attribute_metadata[best]['name']
+        tree.label = None
         data_sub = []
         #if a nominal attribute
         if attribute_metadata[best]['is_nominal'] == True:
             best_attributes_dict = split_on_nominal(data_set, best)
             for v in best_attributes_dict:
                 subtree = ID3(best_attributes_dict[v], attribute_metadata, numerical_splits_count, depth - 1)
-                subtree.label = v
+                subtree.label = mode(best_attributes_dict[v])
                 tree.children[v] = subtree #adding branch to the tree
         #if numerical attribute
         else:
             splits = split_on_numerical(data_set, best, split_value)
             for v in splits:
                 subtree = ID3(v, attribute_metadata, numerical_splits_count, depth - 1)
-                subtree.label = splits.index(v)
+                subtree.label = mode(v)
                 tree.children[splits.index(v)] = subtree #adding branch to the tree
 
         return tree
