@@ -74,106 +74,48 @@ class Node:
         '''
         returns the disjunct normalized form of the tree.
         '''
-        ret_list = []
-        path = []
-        self.dnf_helper(-1, path, ret_list)
         print("dfs")
-        paths = self.dnf_helper_2([self], [], [])
-        print(ret_list)
-        for p in paths:
-            print("path: " + str(p))
-        del ret_list[0][0]
-        ret_list.reverse()
+        paths = self.dnf_helper([self], [], [])
         ret = ''
-        for path in ret_list:
+        for p in paths:
+            del p[0]
+            del p[0]
             ret += '('
-            for node in path:
-                if node == path[-1]:
-                    ret += 'n' + str(node)
+            for n in p:
+                if n == p[-1]:
+                    ret += 'n' + str(n.value)
                 else:
-                    ret += 'n' + str(node) + '^'
+                    ret += 'n' + str(n.value) + '^'
             ret += ')'
-            if path != ret_list[-1]:
+            if p != paths[-1]:
                 ret += 'v'
-        
+                
         print ret
-        # print 'v'.join(ret_list)
-        # self.dnf_helper([], paths)
-        # print paths
-
-    def dnf_helper(self, root_val, path, ret_list):
-        # if self.label == 1 and node_val != -1:
-        #     path.append(node_val)
-        #     return 1
-        # elif self.label == None and node_val != -1:
-        #     path.append(node_val)
-        # elif self.label == 0:
-        #     path = []
-        #     return 0
-        # for child in self.children:
-        #     node_val += 1
-        #     if self.children[child].dnf_helper(node_val, path, ret_list) == 1:
-        #         ret = '('
-        #         path.reverse()
-        #         while len(path) > 0:
-        #             item = path.pop()
-        #             if len(path) == 0:
-        #                 ret += 'n' + str(item)
-        #             else:
-        #                 ret += 'n' + str(item) + '^'
-        #         ret += ')'
-        #         ret_list.append(ret)
-
-        stack = []
-        stack.append(self)
-        while len(stack) > 0:
-            node = stack.pop()
-            if node.label == None or node.label == 1:
-                path.append(node.value)
-            if node.label == 1:
-                ret_list.append(path)
-                path = []
-            if self.value != root_val:
-                    path.append(self.value)
-            for c in node.children:
-                stack.append(node.children[c])
-
-    def dnf_helper_2(self, stack, path, ret_path):
-        print("root: " + str(self.value))
-        print("ret path: " + str(ret_path))
+        
+    def dnf_helper(self, stack, path, ret_path):
+        '''
+        performs recursion for print_dnf_tree and returns list of lists of nodes
+        '''
         root = self
         if not(root in path):
             path.append(root)
         for child in root.children:
             if not(root.children[child] in path):
                 stack.append(root)
-                return root.children[child].dnf_helper_2(stack, path, ret_path)
+                return root.children[child].dnf_helper(stack, path, ret_path)
         #If leaf label is one, save the path
         if root.label == 1:
-            print("1 Leaf: " + str(root))
             stack_temp = []
             for val in stack:
                 stack_temp.append(val)
+            stack_temp.append(root)
             ret_path.append(stack_temp)
-            #print("ret path" + str(ret_path))
         last = stack.pop()
         if len(stack) == 0:
-            print("ret path: " + str(ret_path))
             return ret_path
         else:
-            #return 1
-            return last.dnf_helper_2(stack, path, ret_path)
-
-    # def dnf_helper(self, currPath, paths):
-    #     # node_val += 1
-    #     if self.label == 1:
-    #         currPath.append(self.value)
-    #         paths.append(currPath)
-    #     else:
-    #         currPath.append(self.value)
-    #         for c in self.children:
-    #             self.children[c].dnf_helper(currPath, paths)
-
+            return last.dnf_helper(stack, path, ret_path)
+            
 ### Test cases for dnf ###
 n = Node()
 n.label = None
