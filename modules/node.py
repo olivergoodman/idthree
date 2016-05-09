@@ -76,15 +76,31 @@ class Node:
                 if i == 0:
                     continue
                 if n == p[-1]:
-                    ret += str(p[i-1].name) + '='
-                    for c in p[i - 1].children:
-                        if n == p[i-1].children[c]:
-                            ret += str(c)
+                    ret += str(p[i-1].name) 
+                    if p[i -1].is_nominal == True:
+                        for c in p[i - 1].children:
+                            if n == p[i-1].children[c]:
+                                ret += '=' + str(c)
+                    else:
+                        for c in p[i - 1].children:
+                            if n == p[i-1].children[c]:
+                                if c == 0:
+                                    ret += '<' + str(c)
+                                else:
+                                    ret += '>=' + str(c)
                 else:
-                    ret += str(p[i-1].name) + '='
-                    for c in p[i - 1].children:
-                        if n == p[i-1].children[c]:
-                            ret += str(c)
+                    ret += str(p[i-1].name) 
+                    if p[i -1].is_nominal == True:
+                        for c in p[i - 1].children:
+                            if n == p[i-1].children[c]:
+                                ret += '=' + str(c)
+                    else:
+                        for c in p[i - 1].children:
+                            if n == p[i-1].children[c]:
+                                if c == 0:
+                                    ret += '<' + str(c)
+                                else:
+                                    ret += '>=' + str(c)
                     ret += '^'
             ret += ')'
             if p != paths[-1]:
