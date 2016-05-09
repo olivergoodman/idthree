@@ -31,3 +31,28 @@ print "\r\n"
 
 print "Reduced-error pruned tree validation accuracy:"
 print(validation_accuracy(pruned_tree, validate_data))
+
+#Plotting
+import matplotlib.pyplot
+import pylab
+
+#Create learning curve plot
+x = []
+y = []
+s = data
+sample = []
+random.seed(10)
+random.shuffle(s)
+tenth = int(round(len(data) / 10, 0))
+for i in range(1,10):
+    x.append(i/float(10))
+    sample.extend(s[-tenth:])
+    del(s[-tenth:])
+    print "Tenth ", i, ": ", len(sample)
+    tree = ID3(sample, attr, 14*[4], 5) 
+    y.append(validation_accuracy(tree, validate_data))
+    
+print "tenth: ", x
+print "acc: ", y
+matplotlib.pyplot.scatter(x,y)
+matplotlib.pyplot.show()
