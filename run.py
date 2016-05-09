@@ -8,20 +8,26 @@ from modules.pickled import *
 from modules.parse import *
 from modules.node import *
 
+# Import training and validation datasets
 data, attr = parse("data/test_btrain.csv", True)
-print data[0] #first index is winner attribute (T/F)
-print attr[0] #first index
-tree = ID3(data, attr, 14*[2], 5) 
-print tree.print_dnf_tree()
-
-# attribute_metadata = [{'name': "winner",'is_nominal': True},{'name': "opprundifferential",'is_nominal': False}]
-# data_set = [[1, 0.27], [0, 0.42], [0, 0.86], [0, 0.68], [0, 0.04], [1, 0.01], [1, 0.33], [1, 0.42], [1, 0.42], [0, 0.51], [1, 0.4]]
-# numerical_splits_count = [1, 1]
-# n = ID3(data_set, attribute_metadata, numerical_splits_count, 5)
-
-# n.print_dnf_tree()
 validate_data, validate_attr = parse("data/test_bvalidate.csv", True)
-print(validation_accuracy(tree, validate_data))
 
+# Train initial tree and print
+tree = ID3(data, attr, 14*[2], 5) 
+print "DNF form of initial tree trained on test_btrain.csv:"
+tree.print_dnf_tree()
+print "\r\n"
+
+# Calculate validation accuracy of initial tree and print
+print "Initial tree validation accuracy:"
+print(validation_accuracy(tree, validate_data))
+print "\r\n"
+
+# Prune initial tree and print new tree
 pruned_tree = reduced_error_pruning(tree,data,validate_data)
+print "DNF form of reduced-error pruned tree:"
 pruned_tree.print_dnf_tree()
+print "\r\n"
+
+print "Reduced-error pruned tree validation accuracy:"
+print(validation_accuracy(pruned_tree, validate_data))
