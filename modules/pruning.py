@@ -13,11 +13,14 @@ def reduced_error_pruning(root,training_set,validation_set):
     '''
     # Your code here
     pass
-# 
 
 def validation_accuracy(tree,validation_set):
     '''
     takes a tree and a validation set and returns the accuracy of the set on the given tree
     '''
-    # Your code here
-    pass
+    predictions = [tree.classify(x) for x in validation_set]
+    num_correct = 0
+    for i in range(len(predictions)):
+        if predictions[i] == validation_set[i][0]:
+            num_correct += 1
+    return num_correct / float(len(predictions))

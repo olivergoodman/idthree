@@ -8,7 +8,7 @@ from modules.pickled import *
 from modules.parse import *
 from modules.node import *
 
-data, attr = parse("data/btrain.csv", True)
+data, attr = parse("data/test_btrain.csv", True)
 print data[0] #first index is winner attribute (T/F)
 print attr[0] #first index
 tree = ID3(data, attr, 14*[2], 5) 
@@ -20,3 +20,5 @@ print tree.print_dnf_tree()
 # n = ID3(data_set, attribute_metadata, numerical_splits_count, 5)
 
 # n.print_dnf_tree()
+validate_data, validate_attr = parse("data/test_bvalidate.csv", True)
+print(validation_accuracy(tree, validate_data))

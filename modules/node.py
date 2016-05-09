@@ -38,9 +38,16 @@ class Node:
         curr = self
         while curr.children:
             if curr.is_nominal:
-                curr = curr.children[instance[curr.decision_attribute]]
+                if instance[curr.decision_attribute] in curr.children:
+                    curr = curr.children[instance[curr.decision_attribute]]
+                else:
+                    curr = curr.children[curr.value]
             else:
-                if instance[curr.decision_attribute] < curr.splitting_value:
+                if instance[curr.decision_attribute]  == None:
+                    split_value = curr.value
+                else:
+                    split_value = instance[curr.decision_attribute]
+                if split_value < curr.splitting_value:
                     curr = curr.children[0]
                 else:
                     curr = curr.children[1]

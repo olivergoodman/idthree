@@ -54,6 +54,7 @@ def ID3(data_set, attribute_metadata, numerical_splits_count, depth):
         tree.decision_attribute = best
         tree.splitting_value = split_value
         tree.name = attribute_metadata[best]['name']
+        tree.value = best_mode
         data_sub = []
         #if a nominal attribute
         if attribute_metadata[best]['is_nominal'] == True:
@@ -123,7 +124,7 @@ def pick_best_attribute(data_set, attribute_metadata, numerical_splits_count):
     
     best_ratio = 0
     best_attribute = False
-    steps = 100
+    steps = 2
     split_value = False
     for i in range(len(attribute_metadata)):
         if attribute_metadata[i]['name'] != 'winner':
