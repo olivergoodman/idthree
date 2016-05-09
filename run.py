@@ -22,3 +22,6 @@ print tree.print_dnf_tree()
 # n.print_dnf_tree()
 validate_data, validate_attr = parse("data/test_bvalidate.csv", True)
 print(validation_accuracy(tree, validate_data))
+
+pruned_tree = reduced_error_pruning(tree,data,validate_data)
+pruned_tree.print_dnf_tree()
