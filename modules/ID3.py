@@ -67,15 +67,8 @@ def ID3(data_set, attribute_metadata, numerical_splits_count, depth):
             for v in splits:
                 subtree = ID3(v, attribute_metadata, numerical_splits_count, depth - 1)
                 tree.children[splits.index(v)] = subtree #adding branch to the tree
-
         return tree
-
-        # NOTES:
-        # - need to handle missing attributes
-
-
         
-
 def check_homogenous(data_set):
     '''
     ========================================================================================================
@@ -85,7 +78,7 @@ def check_homogenous(data_set):
     ========================================================================================================
     Output: Return either the homogenous attribute or None
     ========================================================================================================
-     '''
+    '''
     for attribute in data_set:
         if attribute != data_set[0]:
             return None
@@ -130,7 +123,7 @@ def pick_best_attribute(data_set, attribute_metadata, numerical_splits_count):
     
     best_ratio = 0
     best_attribute = False
-    steps = 1
+    steps = 100
     split_value = False
     for i in range(len(attribute_metadata)):
         if attribute_metadata[i]['name'] != 'winner':
@@ -236,7 +229,10 @@ def gain_ratio_nominal(data_set, attribute):
                 attr_data.append(row)
         info_gain -= ((attr.count(value) / length) * entropy(attr_data))
         intr_value -= (attr.count(value) / length) * math.log((attr.count(value) / length), 2)
-    return info_gain / intr_value
+    if intr_value == 0:
+        return 0
+    else:
+        return info_gain / intr_value
 # ======== Test case =============================
 # data_set, attr = [[1, 2], [1, 0], [1, 0], [0, 2], [0, 2], [0, 0], [1, 3], [0, 4], [0, 3], [1, 1]], 1
 # gain_ratio_nominal(data_set,attr) == 0.11470666361703151
@@ -348,9 +344,9 @@ def split_on_numerical(data_set, attribute, splitting_value):
 # d_set,a,sval = [[0, 0.91], [0, 0.84], [1, 0.82], [1, 0.07], [0, 0.82],[0, 0.59], [0, 0.87], [0, 0.17], [1, 0.05], [1, 0.76]],1,0.17
 # split_on_numerical(d_set,a,sval) == ([[1, 0.07], [1, 0.05]],[[0, 0.91],[0, 0.84], [1, 0.82], [0, 0.82], [0, 0.59], [0, 0.87], [0, 0.17], [1, 0.76]])
 
-attribute_metadata = [{'name': "winner",'is_nominal': True},{'name': "opprundifferential",'is_nominal': False}]
-data_set = [[1, 0.27], [0, 0.42], [0, 0.86], [0, 0.68], [0, 0.04], [1, 0.01], [1, 0.33], [1, 0.42], [1, 0.42], [0, 0.51], [1, 0.4]]
-numerical_splits_count = [5, 5]
-n = ID3(data_set, attribute_metadata, numerical_splits_count, 5)
+# attribute_metadata = [{'name': "winner",'is_nominal': True},{'name': "opprundifferential",'is_nominal': False}]
+# data_set = [[1, 0.27], [0, 0.42], [0, 0.86], [0, 0.68], [0, 0.04], [1, 0.01], [1, 0.33], [1, 0.42], [1, 0.42], [0, 0.51], [1, 0.4]]
+# numerical_splits_count = [5, 5]
+# n = ID3(data_set, attribute_metadata, numerical_splits_count, 5)
 
-n.print_dnf_tree()
+# n.print_dnf_tree()
