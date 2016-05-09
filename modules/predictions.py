@@ -22,4 +22,4 @@ def create_predictions(tree, predict):
     wr = csv.writer(output, quoting=csv.QUOTE_ALL)
     for x in predictions:
         wr.writerow([x])
-    print 'predictions saved to output/PS2.csv'
+    print 'Predictions saved to output/PS2.csv'

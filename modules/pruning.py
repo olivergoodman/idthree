@@ -1,6 +1,7 @@
 from node import Node
 from ID3 import *
 from operator import xor
+from copy import deepcopy
 
 # Note, these functions are provided for your reference.  You will not be graded on their behavior,
 # so you can implement them as you choose or not implement them at all if you want to use a different
@@ -13,8 +14,9 @@ def reduced_error_pruning(root,training_set,validation_set):
     '''
     #Depth first search, when you hit a leaf, go to its parent and set that as the leaf with the same label, if validation
     #accuracy improves then keep, otherwise reverse change
-    curr_accuracy = validation_accuracy(root, validation_set)
-    pruned_tree = pruning_dfs(root, root, [root], [], validation_set, curr_accuracy)
+    root_copy = deepcopy(root)
+    curr_accuracy = validation_accuracy(root_copy, validation_set)
+    pruned_tree = pruning_dfs(root_copy, root_copy, [root_copy], [], validation_set, curr_accuracy)
     return pruned_tree
 
 def validation_accuracy(tree,validation_set):
