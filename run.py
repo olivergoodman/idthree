@@ -10,15 +10,15 @@ from modules.node import *
 import matplotlib.pyplot as plt
 
 # Import training and validation datasets
-TRAINING_SET_PATH = 'data/test_btrain.csv'
-VALIDATION_SET_PATH = 'data/test_bvalidate.csv'
-TEST_SET_PATH = 'data/test_btest.csv'
+TRAINING_SET_PATH = 'data/btrain.csv'
+VALIDATION_SET_PATH = 'data/bvalidate.csv'
+TEST_SET_PATH = 'data/btest.csv'
 data, attr = parse(TRAINING_SET_PATH, True)
 validate_data, validate_attr = parse(VALIDATION_SET_PATH, True)
 
 # Train initial tree and print
 # Current best values for accuracy are below
-tree = ID3(data, attr, 14*[4], 5) 
+tree = ID3(data, attr, 14*[3], 5) 
 print 'Question 2'
 print 'DNF form of initial tree trained on ' + TRAINING_SET_PATH + ':'
 tree.print_dnf_tree()
