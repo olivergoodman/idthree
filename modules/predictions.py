@@ -18,7 +18,8 @@ def create_predictions(tree, predict):
     '''
     data, attr = parse(predict, True)
     predictions = [tree.classify(x) for x in data]
-    output = open('predictions.csv", 'wb')
+    output = open('output/PS2.csv', 'wb')
     wr = csv.writer(output, quoting=csv.QUOTE_ALL)
-    wr.writerow(predictions)
-    
+    for x in predictions:
+        wr.writerow([x])
+    print 'predictions saved to output/PS2.csv'

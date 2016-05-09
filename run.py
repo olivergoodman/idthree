@@ -10,29 +10,34 @@ from modules.node import *
 import matplotlib.pyplot as plt
 
 # Import training and validation datasets
-data, attr = parse("data/test_btrain.csv", True)
-validate_data, validate_attr = parse("data/test_bvalidate.csv", True)
+TRAINING_SET_PATH = 'data/test_btrain.csv'
+VALIDATION_SET_PATH = 'data/test_bvalidate.csv'
+TEST_SET_PATH = 'data/test_btest.csv'
+data, attr = parse(TRAINING_SET_PATH, True)
+validate_data, validate_attr = parse(VALIDATION_SET_PATH, True)
 
 # Train initial tree and print
 # Current best values for accuracy are below
 tree = ID3(data, attr, 14*[4], 5) 
-print "DNF form of initial tree trained on test_btrain.csv:"
+print 'Question 2'
+print 'DNF form of initial tree trained on ' + TRAINING_SET_PATH + ':'
 tree.print_dnf_tree()
-print "\r\n"
-
-# Calculate validation accuracy of initial tree and print
-print "Initial tree validation accuracy:"
-print(validation_accuracy(tree, validate_data))
-print "\r\n"
+print '\r\n'
 
 # Prune initial tree and print new tree
 pruned_tree = reduced_error_pruning(tree,data,validate_data)
-print "DNF form of reduced-error pruned tree:"
+print 'Question 5'
+print 'DNF form of reduced-error pruned tree:'
 pruned_tree.print_dnf_tree()
-print "\r\n"
+print '\r\n'
 
-print "Reduced-error pruned tree validation accuracy:"
+# Calculate validation accuracy of initial tree and print
+print 'Question 7'
+print 'Initial tree validation accuracy:'
+print(validation_accuracy(tree, validate_data))
+print 'Reduced-error pruned tree validation accuracy:'
 print(validation_accuracy(pruned_tree, validate_data))
+print '\r\n'
 
 #Plotting
 #Create learning curve plot
@@ -50,9 +55,11 @@ for i in range(1,10):
     del(s[-tenth:])
     tree = ID3(sample, attr, 14*[4], 5) 
     y.append(validation_accuracy(tree, validate_data))
-    pruned_tree = reduced_error_pruning(tree,data,validate_data)
-    z.append(validation_accuracy(pruned_tree, validate_data))
+    pruned_tree_loop = reduced_error_pruning(tree,data,validate_data)
+    z.append(validation_accuracy(pruned_tree_loop, validate_data))
     
+print 'Question 8'
+print 'Displaying plots...'
 plt.scatter(x,y)
 plt.title('Learning Curve on Initial Tree')
 plt.xlabel('% of dataset trained on')
@@ -64,3 +71,7 @@ plt.title('Learning Curve on Reduced-error Pruned Tree')
 plt.xlabel('% of dataset trained on')
 plt.ylabel('% accuracy')
 plt.show()
+
+print '\r\n'
+print 'Question 9'
+create_predictions(pruned_tree, TEST_SET_PATH)
