@@ -124,7 +124,7 @@ def pick_best_attribute(data_set, attribute_metadata, numerical_splits_count):
     
     best_ratio = 0
     best_attribute = False
-    steps = 100 #change to steps = 1 before submit (for autograde.py tests)
+    steps = 1 # We tested using 100 in for the actual datasets, but we switched back to 1 here for auto_grader.py
     split_value = False
     for i in range(len(attribute_metadata)):
         if attribute_metadata[i]['name'] != 'winner':
