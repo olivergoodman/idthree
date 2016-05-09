@@ -7,6 +7,7 @@ from modules.predictions import *
 from modules.pickled import *
 from modules.parse import *
 from modules.node import *
+import matplotlib.pyplot as plt
 
 # Import training and validation datasets
 data, attr = parse("data/test_btrain.csv", True)
@@ -34,12 +35,10 @@ print "Reduced-error pruned tree validation accuracy:"
 print(validation_accuracy(pruned_tree, validate_data))
 
 #Plotting
-import matplotlib.pyplot
-import pylab
-
 #Create learning curve plot
 x = []
 y = []
+z = []
 s = data
 sample = []
 random.seed(10)
@@ -49,11 +48,19 @@ for i in range(1,10):
     x.append(i/float(10))
     sample.extend(s[-tenth:])
     del(s[-tenth:])
-    print "Tenth ", i, ": ", len(sample)
     tree = ID3(sample, attr, 14*[4], 5) 
     y.append(validation_accuracy(tree, validate_data))
+    pruned_tree = reduced_error_pruning(tree,data,validate_data)
+    z.append(validation_accuracy(pruned_tree, validate_data))
     
-print "tenth: ", x
-print "acc: ", y
-matplotlib.pyplot.scatter(x,y)
-matplotlib.pyplot.show()
+plt.scatter(x,y)
+plt.title('Learning Curve on Initial Tree')
+plt.xlabel('% of dataset trained on')
+plt.ylabel('% accuracy')
+plt.show()
+
+plt.scatter(x,z)
+plt.title('Learning Curve on Reduced-error Pruned Tree')
+plt.xlabel('% of dataset trained on')
+plt.ylabel('% accuracy')
+plt.show()
