@@ -1,6 +1,7 @@
 import math
 from node import Node
 import sys
+import copy
 
 def ID3(data_set, attribute_metadata, numerical_splits_count, depth):
     '''
@@ -31,6 +32,17 @@ def ID3(data_set, attribute_metadata, numerical_splits_count, depth):
         return n
     else:
         best, split_value = pick_best_attribute(data_set, attribute_metadata, numerical_splits_count)
+        #Find mode of best attribute column
+        best_data = []
+        for sublist in data_set:
+            if sublist[0] != None:
+                best_data.append(sublist[0])
+        best_mode = max(set(best_data), key=best_data.count)
+        #Replace missing values of best attribute column with mode
+        data_copy = copy.deepcopy(data_set)
+        for row in data_copy:
+            row[best] = best_mode
+            
         if attribute_metadata[best]['is_nominal'] == False:
             numerical_splits_count[best] -= 1
         if best == False:
@@ -45,13 +57,13 @@ def ID3(data_set, attribute_metadata, numerical_splits_count, depth):
         data_sub = []
         #if a nominal attribute
         if attribute_metadata[best]['is_nominal'] == True:
-            best_attributes_dict = split_on_nominal(data_set, best)
+            best_attributes_dict = split_on_nominal(data_copy, best)
             for v in best_attributes_dict:
                 subtree = ID3(best_attributes_dict[v], attribute_metadata, numerical_splits_count, depth - 1)
                 tree.children[v] = subtree #adding branch to the tree
         #if numerical attribute
         else:
-            splits = split_on_numerical(data_set, best, split_value)
+            splits = split_on_numerical(data_copy, best, split_value)
             for v in splits:
                 subtree = ID3(v, attribute_metadata, numerical_splits_count, depth - 1)
                 tree.children[splits.index(v)] = subtree #adding branch to the tree
@@ -99,6 +111,23 @@ def pick_best_attribute(data_set, attribute_metadata, numerical_splits_count):
     Output: best attribute, split value if numeric
     ========================================================================================================
     '''
+    #Calculate mode/mean of each attribute
+    mode_list = []
+    for i in range(len(attribute_metadata)):
+        data = []
+        for sublist in data_set:
+            if sublist[i] != None:
+                data.append(sublist[i])
+        if attribute_metadata[i]['is_nominal'] == True:
+            mode_list.append(max(set(data), key=data.count))
+        else:
+            mode_list.append(sum(data) / float(len(data)))
+    #Replace Nones with modes/mean of attributes  
+    for sublist in data_set:
+        for i in range(len(sublist)):
+            if sublist[i] == None:
+                sublist[i] = mode_list[i]    
+    
     best_ratio = 0
     best_attribute = False
     steps = 1
@@ -143,7 +172,8 @@ def mode(data_set):
     #Create list of only the winner variable
     winners = []
     for sublist in data_set:
-        winners.append(sublist[0])
+        if sublist[0] != None:
+            winners.append(sublist[0])
     return max(set(winners), key=winners.count)
 # ======== Test case =============================
 # data_set = [[0],[1],[1],[1],[1],[1]]
