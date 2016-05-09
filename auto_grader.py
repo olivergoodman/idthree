@@ -88,7 +88,7 @@ def grader(homogenous=False,p_best_attribute=False,mode=False,entropy=False,gain
         name = "classify"
         print title,name,title
         check_classify()
-        if ID3:
+    if ID3:
         name = "ID3"
         print title,name,title
         check_ID3()
