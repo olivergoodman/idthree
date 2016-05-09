@@ -13,7 +13,8 @@ data, attr = parse("data/test_btrain.csv", True)
 validate_data, validate_attr = parse("data/test_bvalidate.csv", True)
 
 # Train initial tree and print
-tree = ID3(data, attr, 14*[2], 5) 
+# Current best values for accuracy are below
+tree = ID3(data, attr, 14*[4], 5) 
 print "DNF form of initial tree trained on test_btrain.csv:"
 tree.print_dnf_tree()
 print "\r\n"
