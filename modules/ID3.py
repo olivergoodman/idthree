@@ -35,14 +35,14 @@ def ID3(data_set, attribute_metadata, numerical_splits_count, depth):
         #Find mode of best attribute column
         best_data = []
         for sublist in data_set:
-            if sublist[0] != None:
-                best_data.append(sublist[0])
+            if sublist[best] != None:
+                best_data.append(sublist[best])
         best_mode = max(set(best_data), key=best_data.count)
         #Replace missing values of best attribute column with mode
         data_copy = copy.deepcopy(data_set)
         for row in data_copy:
-            row[best] = best_mode
-            
+            if row[best] == None:
+                row[best] = best_mode
         if attribute_metadata[best]['is_nominal'] == False:
             numerical_splits_count[best] -= 1
         if best == False:
